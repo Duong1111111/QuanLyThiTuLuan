@@ -1,0 +1,241 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #e6eff7;
+    padding: 20px;
+}
+
+.container {
+    max-width: 2000px;
+    margin: auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.filters {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.filters label {
+    font-size: 16px;
+    color: #333;
+}
+
+.filters select {
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.main-content {
+    display: flex;
+    gap: 40px;
+}
+
+.sidebar {
+    width: 200px;
+}
+
+.room-list {
+    list-style: none;
+    padding: 0;
+}
+
+.room-button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+}
+
+.room-button.active {
+    background-color: #0056b3;
+}
+
+.room-button:hover {
+    background-color: #0056b3;
+}
+
+.table-container {
+    flex: 1;
+}
+
+.toolbar {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.toolbar-btn {
+    padding: 10px 15px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.toolbar-btn:hover {
+    background-color: #0056b3;
+}
+
+.status-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.status-table th, .status-table td {
+    padding: 20px;
+    text-align: left;
+    border: 2px solid #ccc;
+}
+
+.status-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.status-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
+}
+/* Modal Styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    width: 450px; /* Adjust width to fit the form content */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+}
+
+.modal.active {
+    display: block; /* Show the modal */
+}
+
+/* Modal Header Styling */
+.modal h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #333;
+    text-align: center;
+}
+
+/* Modal Content Styling */
+.modal-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content label {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="date"],
+.modal-content select,
+.modal-content textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+/* Textarea Styling */
+.modal-content textarea {
+    height: 70px;
+    resize: none;
+}
+
+/* Radio Buttons Styling */
+.modal-content input[type="radio"] {
+    margin-right: 5px;
+}
+
+/* Modal Footer Styling */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.modal-footer button {
+    padding: 8px 16px;
+    font-size: 14px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-footer button[type="submit"] {
+    background-color: #28a745; /* Green for submit */
+}
+
+.modal-footer button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+.modal-footer button[type="button"] {
+    background-color: #dc3545; /* Red for cancel */
+}
+
+.modal-footer button[type="button"]:hover {
+    background-color: #c82333;
+}
+
+/* Optional: Add some animation */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.modal.active {
+    animation: modalFadeIn 0.3s ease-out;
+}

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhập Tình Trạng Thi</title>
+  <link rel="stylesheet" href="style1.css">
+  <style>
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1000; /* Sit on top */
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 400px; /* Could be more or less, depending on screen size */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+
+    .modal.active {
+      display: block; /* Show the modal */
+    }
+
+    .modal-content input[type="text"],
+    .modal-content input[type="date"],
+    .modal-content select,
+    .modal-content textarea {
+      width: 100%;
+      padding: 5px;
+      margin: 5px 0;
+      box-sizing: border-box;
+    }
+
+    .modal-content label {
+      margin-top: 10px;
+    }
+
+    .modal-footer {
+      text-align: right;
+      margin-top: 15px;
+    }
+
+    .modal-footer button {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <h1>Nhập tình trạng thi</h1>
+  <div class="filters">
+    <label for="nhom-thi">Nhóm thi:</label>
+    <select id="nhom-thi">
+      <option>Nhóm 1</option>
+      <option>Nhóm 2</option>
+    </select>
+
+    <label for="mon-thi">Môn thi:</label>
+    <select id="mon-thi">
+      <option>Toán</option>
+      <option>Vật lý</option>
+    </select>
+  </div>
+
+  <div class="main-content">
+    <div class="sidebar">
+      <ul class="room-list">
+        <li><button class="room-button active">Phòng thi 01</button></li>
+        <li><button class="room-button">Phòng thi 02</button></li>
+      </ul>
+    </div>
+
+    <div id="examStatusForm" class="modal">
+      <div class="modal-content">
+        <h2>Nhập tình trạng thi</h2>
+        <form id="statusForm">
+          <div>
+            <label for="hoten">Họ và tên:</label>
+            <input type="text" id="hoten" value="Trần Minh Hùng" readonly>
+          </div>
+          <div>
+            <label for="sobd">Số báo danh:</label>
+            <input type="text" id="sobd" value="02N001" readonly>
+          </div>
+          <div>
+            <label for="ngaysinh">Ngày sinh:</label>
+            <input type="text" id="ngaysinh" value="05/03/2010" readonly>
+          </div>
+          <div>
+            <label for="gioitinh">Giới tính:</label>
+            <input type="text" id="gioitinh" value="Nam" readonly>
+          </div>
+          <div>
+            <label for="monthi">Môn thi:</label>
+            <select id="monthi">
+              <option value="toan">Toán</option>
+              <option value="vatly">Vật lý</option>
+            </select>
+          </div>
+          <div>
+            <label for="thamgia">Tham gia thi:</label>
+            <label><input type="radio" name="thamgia" value="co" checked> Có tham gia thi</label>
+            <label><input type="radio" name="thamgia" value="bo"> Bỏ thi</label>
+          </div>
+          <div>
+            <label for="kyluat">Bị kỷ luật:</label>
+            <select id="kyluat">
+              <option value="">Không</option>
+              <option value="canh-cao">Cảnh cáo</option>
+              <option value="dinh-chi">Đình chỉ</option>
+            </select>
+          </div>
+          <div>
+            <label for="ghichu">Ghi chú:</label>
+            <textarea id="ghichu"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="submit">Đồng ý</button>
+            <button type="button" onclick="closeExamStatusForm()">Hủy bỏ</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="toolbar">
+        <button class="toolbar-btn" onclick="showExamStatusForm()">Nhập tình trạng thi</button>
+      </div>
+
+      <table class="status-table">
+        <thead>
+        <tr>
+          <th>STT</th>
+          <th>Số báo danh</th>
+          <th>Họ và tên</th>
+          <th>Ngày sinh</th>
+          <th>Giới tính</th>
+          <th>Bỏ thi</th>
+          <th>Kỷ luật</th>
+          <th>Ghi chú</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>1</td>
+          <td>02N001</td>
+          <td>Trần Minh Hùng</td>
+          <td>05/03/2010</td>
+          <td>Nam</td>
+          <td><input type="checkbox"></td>
+          <td><input type="checkbox"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>02N002</td>
+          <td>Trần Trung Tiến</td>
+          <td>05/04/2010</td>
+          <td>Nam</td>
+          <td><input type="checkbox"></td>
+          <td><input type="checkbox"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>02N003</td>
+          <td>Nguyễn Như Na</td>
+          <td>10/06/2010</td>
+          <td>Nữ</td>
+          <td><input type="checkbox"></td>
+          <td><input type="checkbox"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>02N004</td>
+          <td>Lê Lão Luyện</td>
+          <td>15/08/2010</td>
+          <td>Nam</td>
+          <td><input type="checkbox"></td>
+          <td><input type="checkbox"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>02N005</td>
+          <td>Lữ Linh Lung</td>
+          <td>19/03/2010</td>
+          <td>Nữ</td>
+          <td><input type="checkbox"></td>
+          <td><input type="checkbox"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>02N006</td>
+          <td>Hà Hữu Hình</td>
+          <td>05/09/2010</td>
+          <td>Nam</td>
+          <td><input type="checkbox"></td>
+          <td><input type="checkbox"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>02N007</td>
+          <td>Đỗ Nhưng Trượt</td>
+          <td>15/09/2010</td>
+          <td>Nam</td>
+          <td><input type="checkbox"></td>
+          <td><input type="checkbox"></td>
+          <td></td>
+        </tr>
+        <!-- Add more rows as needed -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showExamStatusForm() {
+    document.getElementById("examStatusForm").classList.add("active");
+  }
+
+  function closeExamStatusForm() {
+    document.getElementById("examStatusForm").classList.remove("active");
+  }
+
+  document.getElementById("statusForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    alert("Tình trạng thi đã được nhập!");
+    closeExamStatusForm();
+  });
+</script>
+</body>
+
+</html>

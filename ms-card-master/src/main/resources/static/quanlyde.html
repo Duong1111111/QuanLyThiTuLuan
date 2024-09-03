@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách Đề</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Nút In Đề */
+    .print-button {
+      position: absolute;
+      top: 20px;
+      right: 120px; /* Adjusted to prevent overlap with other buttons */
+      background-color: #00796b;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    .print-button:hover {
+      background-color: #004d40;
+    }
+
+    /* Modal Form for Print */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 300px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-content button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .confirm-print {
+      background-color: #00796b;
+      color: white;
+    }
+
+    .confirm-print:hover {
+      background-color: #004d40;
+    }
+
+    .cancel-print {
+      background-color: #e64a19;
+      color: white;
+    }
+
+    .cancel-print:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+<button class="print-button" onclick="showPrintModal()">In Đề</button>
+
+<div class="container">
+  <div class="form-container">
+    <h2 id="form-title">Quản Lý Đề</h2>
+    <form id="deForm" onsubmit="event.preventDefault(); submitForm();">
+      <input type="hidden" id="de_id" name="de_id">
+
+      <div class="form-group">
+        <label for="thongTinDe">Thông Tin Đề:</label>
+        <input type="text" id="thongTinDe" name="thongTinDe" required>
+      </div>
+
+      <div class="form-group">
+        <label for="noiDungDe">Nội Dung Đề:</label>
+        <textarea id="noiDungDe" name="noiDungDe" required></textarea>
+      </div>
+
+      <button type="submit" id="form-submit-button">Thêm</button>
+    </form>
+  </div>
+
+  <div class="table-container">
+    <h2>Danh sách Đề</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Thông Tin Đề</th>
+        <th>Nội Dung Đề</th>
+        <th>Thao Tác</th>
+      </tr>
+      </thead>
+      <tbody id="de-table-body">
+      <!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="printModal" class="modal">
+  <div class="modal-content">
+    <p>Bạn có muốn in đề này không?</p>
+    <button class="confirm-print" onclick="confirmPrint()">Đồng ý</button>
+    <button class="cancel-print" onclick="closePrintModal()">Hủy bỏ</button>
+  </div>
+</div>
+
+<script>
+  const apiUrl = '/api/v1/de';
+  let isEditing = false;
+
+  // Load danh sách đề
+  function loadDe() {
+    fetch(`${apiUrl}/list`)
+            .then(response => response.json())
+            .then(data => {
+              const tableBody = document.getElementById('de-table-body');
+              tableBody.innerHTML = ''; // Xóa dữ liệu cũ
+              data.forEach(de => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+            <td>${de.maDe}</td>
+            <td>${de.thongTinDe}</td>
+            <td>${de.noiDungDe}</td>
+            <td>
+              <button onclick="editDe(${de.maDe})">Sửa</button>
+              <button onclick="deleteDe(${de.maDe})">Xóa</button>
+            </td>
+          `;
+                tableBody.appendChild(row);
+              });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+  }
+
+  // Hàm xử lý khi gửi form (dùng chung cho thêm và cập nhật)
+  function submitForm() {
+    const id = document.getElementById('de_id').value;
+    const de = {
+      thongTinDe: document.getElementById('thongTinDe').value,
+      noiDungDe: document.getElementById('noiDungDe').value,
+    };
+
+    if (isEditing) {
+      de.maDe = id;
+      updateDe(de);
+    } else {
+      addDe(de);
+    }
+  }
+
+  // Thêm đề
+  function addDe(de) {
+    fetch(`${apiUrl}/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(de)
+    })
+            .then(response => response.json())
+            .then(() => {
+              resetForm();
+              loadDe();
+            })
+            .catch(error => console.error('Error adding data:', error));
+  }
+
+  // Cập nhật đề
+  function updateDe(de) {
+    fetch(`${apiUrl}/update`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(de)
+    })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert(data.message);
+                resetForm();
+                loadDe();
+              } else {
+                resetForm();
+                loadDe();
+              }
+            })
+            .catch(error => console.error('Error updating data:', error));
+  }
+
+  // Chọn đề để chỉnh sửa
+  function editDe(id) {
+    fetch(`${apiUrl}/find/${id}`)
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                const de = data.data;
+                document.getElementById('de_id').value = de.maDe;
+                document.getElementById('thongTinDe').value = de.thongTinDe;
+                document.getElementById('noiDungDe').value = de.noiDungDe;
+                document.getElementById('form-title').innerText = 'Cập Nhật Đề';
+                document.getElementById('form-submit-button').innerText = 'Cập Nhật';
+                isEditing = true;
+              } else {
+                console.error('Load lại trang:', data.message);
+              }
+            })
+            .catch(error => console.error('Lỗi:', error));
+  }
+
+  // Xóa đề
+  function deleteDe(id) {
+    fetch(`${apiUrl}/delete/${id}`, {
+      method: 'GET'
+    })
+            .then(response => response.json())
+            .then(() => {
+              loadDe();
+            })
+            .catch(error => console.error('Error deleting data:', error));
+  }
+
+  // Reset form về trạng thái ban đầu
+  function resetForm() {
+    document.getElementById('deForm').reset();
+    document.getElementById('de_id').value = '';
+    document.getElementById('form-title').innerText = 'Thêm Đề';
+    document.getElementById('form-submit-button').innerText = 'Thêm';
+    isEditing = false;
+  }
+  // Show the print modal
+  function showPrintModal() {
+    document.getElementById('printModal').style.display = 'flex';
+  }
+
+  // Close the print modal
+  function closePrintModal() {
+    document.getElementById('printModal').style.display = 'none';
+  }
+
+  // Confirm the print action
+  function confirmPrint() {
+    alert("Đề đang được in...");
+    closePrintModal();
+    // Here, you can add your print logic like opening a print dialog
+    window.print(); // Example to trigger print dialog
+  }
+
+
+  // Load danh sách ban đầu
+  loadDe();
+</script>
+</body>
+</html>

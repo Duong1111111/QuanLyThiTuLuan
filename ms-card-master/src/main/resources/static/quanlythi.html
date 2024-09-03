@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách Học Sinh</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .inline-form {
+      display: none;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 15px;
+      position: fixed;
+      z-index: 1000;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    .inline-form.active {
+      display: block;
+    }
+
+    .table-container {
+      position: relative;
+    }
+
+    .form-actions {
+      margin-top: 15px;
+    }
+
+    .form-actions button {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="toolbar">
+  <h1>Hệ Thống Quản Lý Thi Tự Luận</h1>
+  <div class="toolbar-buttons">
+    <a href="nhaptinhtrangthi.html" class="button-like">Nhập tình trạng thi </a>
+    <a href="#" id="openPhanPhongThiBtn" class="button-like">Phân phòng thi và đánh số báo danh</a>
+    <a href="#" id="openFormBtn" class="button-like">Dồn túi bài thi và làm phách</a>
+  </div>
+</div>
+
+<div class="table-container">
+  <h2>Danh sách Học Sinh</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Số Báo Danh</th>
+      <th>Họ và Tên</th>
+      <th>Ngày Sinh</th>
+      <th>Giới Tính</th>
+    </tr>
+    </thead>
+    <tbody id="hs-table-body">
+    <!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
+    </tbody>
+  </table>
+
+  <!-- Form Dồn túi bài thi và làm phách -->
+  <div id="formInline" class="inline-form">
+    <h2>Dồn túi bài thi và làm phách</h2>
+    <form id="donthiForm">
+      <fieldset>
+        <legend>Quy tắc dồn túi bài thi</legend>
+        <label>
+          <input type="radio" name="quytac" value="1phong" checked> 1 phòng thi vào 1 túi bài
+        </label>
+        <label>
+          <input type="radio" name="quytac" value="nhieuphong"> Rút từ nhiều phòng thi vào 1 túi bài
+        </label>
+        <div>
+          <label for="sapxep">Sắp xếp thứ tự túi bài (*)</label>
+          <select id="sapxep" required>
+            <option value="">Chọn thứ tự</option>
+            <option value="thutu1">Thứ tự 1</option>
+            <option value="thutu2">Thứ tự 2</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Quy tắc đánh phách</legend>
+        <div>
+          <label for="tiento">Tiền tố</label>
+          <input type="text" id="tiento" required>
+        </div>
+        <div>
+          <label for="startnumber">Bắt đầu từ số (*)</label>
+          <input type="number" id="startnumber" required>
+        </div>
+        <div>
+          <label for="preview">Xem trước</label>
+          <input type="text" id="preview" readonly>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <button type="submit">Đồng ý</button>
+        <button type="button" id="cancelBtn">Hủy bỏ</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Form Phân phòng thi và đánh số báo danh -->
+  <div id="formPhanPhongThi" class="inline-form">
+    <h2>Đánh số báo danh và phân phòng thi</h2>
+    <form id="phanPhongThiForm">
+      <fieldset>
+        <legend>Quy tắc đánh số báo danh (Tiền tố + Bắt đầu từ số)</legend>
+        <div>
+          <label for="tiento_sbd">Tiền tố (*)</label>
+          <input type="text" id="tiento_sbd" required>
+        </div>
+        <div>
+          <label for="batdautuso">Bắt đầu từ số (*)</label>
+          <input type="number" id="batdautuso" required>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Quy tắc phân phòng thi</legend>
+        <label>
+          <input type="radio" name="quytacphanphong" value="chieuPhong" checked> Chia đều theo số lượng phòng
+        </label>
+        <label>
+          <input type="radio" name="quytacphanphong" value="chieuTS"> Chia theo số lượng thí sinh
+        </label>
+        <div>
+          <label for="sothisinh">Số thí sinh/Phòng</label>
+          <input type="number" id="sothisinh" disabled>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <button type="submit">Đồng ý</button>
+        <button type="button" id="cancelBtnPhanPhongThi">Hủy bỏ</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const apiUrl = '/api/v1/hs';
+
+  // Load danh sách hồ sơ
+  function loadHS() {
+    fetch(`${apiUrl}/list`)
+            .then(response => response.json())
+            .then(data => {
+              const tableBody = document.getElementById('hs-table-body');
+              tableBody.innerHTML = ''; // Xóa dữ liệu cũ
+              data.forEach(hs => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+            <td>${hs.stt}</td>
+            <td>${hs.soBaoDanh}</td>
+            <td>${hs.hoVaTen}</td>
+            <td>${hs.ngaySinh}</td>
+            <td>${hs.gioiTinh}</td>
+          `;
+                tableBody.appendChild(row);
+              });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+  }
+
+  // Load danh sách ban đầu
+  loadHS();
+
+  // Xử lý sự kiện khi mở form Dồn túi bài thi và làm phách
+  document.getElementById('openFormBtn').addEventListener('click', function(event) {
+    event.preventDefault();
+    const formInline = document.getElementById('formInline');
+    formInline.classList.toggle('active');
+    document.getElementById('formPhanPhongThi').classList.remove('active'); // Đóng form khác nếu đang mở
+  });
+
+  // Xử lý sự kiện khi đóng form Dồn túi bài thi và làm phách
+  document.getElementById('cancelBtn').addEventListener('click', function() {
+    document.getElementById('formInline').classList.remove('active');
+  });
+
+  // Xử lý sự kiện khi submit form Dồn túi bài thi và làm phách
+  document.getElementById('donthiForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const tiento = document.getElementById('tiento').value;
+    const startnumber = document.getElementById('startnumber').value;
+
+    let preview = '';
+    for (let i = 0; i < 10; i++) {
+      preview += `${tiento}${parseInt(startnumber) + i}\n`;
+    }
+
+    document.getElementById('preview').value = preview;
+
+    alert('Đã tạo thành công số phách!');
+  });
+
+  // Xử lý sự kiện khi mở form Phân phòng thi và đánh số báo danh
+  document.getElementById('openPhanPhongThiBtn').addEventListener('click', function(event) {
+    event.preventDefault();
+    const formPhanPhongThi = document.getElementById('formPhanPhongThi');
+    formPhanPhongThi.classList.toggle('active');
+    document.getElementById('formInline').classList.remove('active'); // Đóng form khác nếu đang mở
+  });
+
+  // Xử lý sự kiện khi đóng form Phân phòng thi và đánh số báo danh
+  document.getElementById('cancelBtnPhanPhongThi').addEventListener('click', function() {
+    document.getElementById('formPhanPhongThi').classList.remove('active');
+  });
+
+  // Xử lý sự kiện khi submit form Phân phòng thi và đánh số báo danh
+  document.getElementById('phanPhongThiForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const tiento_sbd = document.getElementById('tiento_sbd').value;
+    const batdautuso = document.getElementById('batdautuso').value;
+
+    alert(`Đã phân phòng thi và đánh số báo danh với tiền tố ${tiento_sbd} bắt đầu từ số ${batdautuso}!`);
+  });
+
+  // Enable or disable input for số thí sinh/phòng based on selected option
+  document.getElementsByName('quytacphanphong').forEach(radio => {
+    radio.addEventListener('change', function() {
+      const sothisinhInput = document.getElementById('sothisinh');
+      if (this.value === 'chieuTS') {
+        sothisinhInput.disabled = false;
+      } else {
+        sothisinhInput.disabled = true;
+        sothisinhInput.value = '';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

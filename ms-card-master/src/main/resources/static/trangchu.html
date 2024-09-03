@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ - Quản Lý Thi Tự Luận</title>
+    <style>
+        /* Cài đặt cơ bản */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(120deg, #f0f9ff, #c0e8ff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative; /* Thêm position relative để đặt nút đăng xuất */
+        }
+
+        /* Nút đăng xuất */
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-button:hover {
+            background-color: #e64a19;
+        }
+
+        /* Container chính */
+        .container {
+            text-align: center;
+            max-width: 900px;
+            width: 90%;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 36px;
+            color: #00796b;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        /* Thiết kế dạng card layout */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card a {
+            text-decoration: none;
+            color: #00796b;
+            font-size: 18px;
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .card a:hover {
+            color: #004d40;
+        }
+
+        /* Icon trong card */
+        .card-icon {
+            font-size: 50px;
+            color: #00796b;
+            margin-bottom: 15px;
+        }
+
+        /* Modal Form Logout */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .confirm-logout {
+            background-color: #ff5722;
+            color: white;
+        }
+
+        .confirm-logout:hover {
+            background-color: #e64a19;
+        }
+
+        .cancel-logout {
+            background-color: #00796b;
+            color: white;
+        }
+
+        .cancel-logout:hover {
+            background-color: #004d40;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Nút Đăng Xuất -->
+<button class="logout-button" onclick="showLogoutModal()">Đăng Xuất</button>
+
+<div class="container">
+    <h1>Hệ Thống Quản Lý Thi Tự Luận Tập Trung</h1>
+    <p>Chọn chức năng bạn muốn thực hiện:</p>
+    <div class="card-container">
+        <div class="card">
+            <div class="card-icon">📝</div>
+            <a href="quanlythi.html">Quản Lý Thi, Kiểm Tra Tập Trung</a>
+        </div>
+        <div class="card">
+            <div class="card-icon">📄</div>
+            <a href="quanlyde.html">Quản Lý Đề</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Logout Confirmation -->
+<div id="logoutModal" class="modal">
+    <div class="modal-content">
+        <p>Bạn có chắc chắn muốn đăng xuất không?</p>
+        <button class="confirm-logout" onclick="confirmLogout()">Đồng ý</button>
+        <button class="cancel-logout" onclick="closeLogoutModal()">Hủy bỏ</button>
+    </div>
+</div>
+
+<script>
+    // Show the logout modal
+    function showLogoutModal() {
+        document.getElementById('logoutModal').style.display = 'flex';
+    }
+
+    // Close the logout modal
+    function closeLogoutModal() {
+        document.getElementById('logoutModal').style.display = 'none';
+    }
+
+    // Handle the logout confirmation
+    function confirmLogout() {
+        alert("Bạn đã đăng xuất!");
+        closeLogoutModal();
+        // Here, you can add your logout logic like redirecting to the login page, clearing session, etc.
+        window.location.href = 'login.html'; // Example redirect
+    }
+</script>
+</body>
+</html>
